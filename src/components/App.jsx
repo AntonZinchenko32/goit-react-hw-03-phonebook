@@ -11,6 +11,21 @@ export class App extends Component {
     filter: '',
   };
 
+  componentDidMount() {
+    const savedContacts = JSON.parse(localStorage.getItem('contacts'));
+
+    if (savedContacts) this.setState({ contacts: savedContacts });
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const actualContactList = this.state.contacts;
+    const previousContactList = prevState.contacts;
+
+    if (actualContactList !== previousContactList) {
+      localStorage.setItem('contacts', JSON.stringify(actualContactList));
+    }
+  }
+
   // Додавання контактів із забороною на додавання з однаковими іменами ***************************************************
   addContactFunc = newContact => {
     const { name, number } = newContact;
@@ -22,6 +37,7 @@ export class App extends Component {
 
     if (!gotMatch) {
       // Асинхронно додаэмо новий контакт до масиву контактів в стані додатку
+
       this.setState(({ contacts }) => ({
         contacts: contacts.concat({
           id: nanoid(),
